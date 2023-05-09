@@ -12,7 +12,9 @@ import UIKit
 class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 	
 	// MARK: - Declarations. Private
-	
+
+    private let _kAnimationDuration = 0.3
+
     private var _isSearching = true //false
 	private var _searchText: String? = nil
 
@@ -155,6 +157,23 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	@objc
 	private func onButtonSearchDidTap() {
 		self.setIsSearching(!_isSearching, animated: true)
+
+        let rcNavBar = _navigationBar.frame
+
+        var rcSrcBar = _searchBar.frame
+
+        if _isSearching {
+            rcSrcBar.origin.y = rcNavBar.maxY
+        } else {
+            rcSrcBar.origin.y = rcNavBar.maxY - rcSrcBar.size.height
+        }
+
+        let propAnimator = UIViewPropertyAnimator(duration: _kAnimationDuration,
+                                                  curve: .easeInOut) {
+            self._searchBar.frame = rcSrcBar
+            self._searchBar.alpha = self._isSearching ? 1.0 : 0.0
+        }
+        propAnimator.startAnimation()
 	}
 	
 	@objc
