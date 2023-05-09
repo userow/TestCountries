@@ -35,7 +35,10 @@ class CountryCellView: UITableViewCell {
 	}
 	
 	// MARK: - 
-	
+
+    func configure(countryInfo: CountryInfo) {
+
+    }
 }
 
 

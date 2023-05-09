@@ -13,8 +13,12 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	
 	// MARK: - Declarations. Private
 	
-	private var _isSearching = true//false
+    private var _isSearching = true //false
 	private var _searchText: String? = nil
+
+    private var _isFlaggOn = false
+    private var _isCodeOn = false
+
 	
 	private let _navigationItem = UINavigationItem()
 	private let _navigationBar = UINavigationBar()
@@ -26,7 +30,9 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	
 	private let _toolBar = UIToolbar()
 	private var _buttonFlag = UIBarButtonItem()
-	
+    private let _spacer = UIBarButtonItem(customView: UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 16)))
+    private var _buttonCode = UIBarButtonItem()
+
 	// MARK: - Initialize
 	
 	override init(frame: CGRect) {
@@ -55,8 +61,9 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		self.addSubview(_navigationBar)
 		
 		_buttonFlag = UIBarButtonItem(image: UIImage(systemName: "flag"), style: .plain, target: self, action: #selector(onButtonFlagDidTap))
-		_toolBar.items = [_buttonFlag]
-		
+        _buttonCode = UIBarButtonItem(image: UIImage(systemName: "number.square"), style: .plain, target: self, action: #selector(onButtonCodeDidTap))
+		_toolBar.items = [_buttonFlag, _spacer, _buttonCode]
+
 		self.addSubview(_toolBar)
 	}
 	
@@ -67,7 +74,11 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	// MARK: - Private
 	
 	private func setIsSearching(_ isSearching: Bool, animated: Bool) {
-		
+        _isSearching = isSearching
+        print("isSearching = \(isSearching)")
+//        if animated {
+            self.layoutIfNeeded()
+//        }
 	}
 	
 	private func setSearchText(_ searchText: String?) {
@@ -88,7 +99,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		
 		var rcSrcBar = rcBnds
 		rcSrcBar.size.height = _searchBar.sizeThatFits(rcSrcBar.size).height
-		if _isSearching {
+
+        if _isSearching {
 			rcSrcBar.origin.y = rcNavBar.maxY
 		} else {
 			rcSrcBar.origin.y = rcNavBar.maxY - rcSrcBar.size.height
@@ -119,7 +131,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		let cellReuseId = "Country cell"
 		var cell = _tableView.dequeueReusableCell(withIdentifier: cellReuseId)
 		if cell == nil {
-			cell = UITableViewCell(style: .default, reuseIdentifier: cellReuseId)
+            cell = UITableViewCell(style: .default, reuseIdentifier: cellReuseId)
 			cell?.textLabel?.numberOfLines = 0
 		}
 		cell?.textLabel?.text = countryInfo.name
@@ -147,9 +159,18 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	
 	@objc
 	private func onButtonFlagDidTap() {
-		
+        _isFlaggOn = !_isFlaggOn
+        _buttonFlag.image = _isFlaggOn ? UIImage(systemName: "flag.fill") : UIImage(systemName: "flag")
+        //TODO: Table update
 	}
-	
+
+    @objc
+    private func onButtonCodeDidTap() {
+        _isCodeOn = !_isCodeOn
+        _buttonCode.image = _isCodeOn ? UIImage(systemName: "number.square.fill") : UIImage(systemName: "number.square")
+        //TODO: Table update
+    }
+
 	// MARK: -
 
 }

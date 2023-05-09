@@ -284,12 +284,16 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 			if parts.count == 4 {
 				let flagSymbol = parts[1]
 				let name = parts[3]
-				_countries.append(CountryInfo(name: name, flagSymbol: flagSymbol))
+                let code = parts[0]
+				_countries.append(CountryInfo(name: name,
+                                              flagSymbol: flagSymbol,
+                                              code: code))
 			}
 		}
 		
 		_countries.append(CountryInfo(name: "A country that has a very long name that does not fit to one line",
-									  flagSymbol: _countries.first?.flagSymbol ?? "-"
+                                      flagSymbol: _countries.first?.flagSymbol ?? "-",
+                                      code: _countries.first?.code ?? "-"
 									 ))
 	}
 	
