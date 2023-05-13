@@ -59,12 +59,12 @@ class CountryCellView: UITableViewCell {
         _labelName.numberOfLines = 0
         _labelName.textColor = .label
         _labelName.textAlignment = .justified
-        _labelName.backgroundColor = .red
+//        _labelName.backgroundColor = .red
 
         _labelCode.translatesAutoresizingMaskIntoConstraints = false
         _labelCode.textColor = .secondaryLabel
         _labelCode.textAlignment = .justified
-        _labelCode.backgroundColor = .green
+//        _labelCode.backgroundColor = .green
 
         _stackV.translatesAutoresizingMaskIntoConstraints = false;
         _stackV.axis = .vertical
@@ -73,15 +73,14 @@ class CountryCellView: UITableViewCell {
         _stackV.contentMode = .scaleToFill
         _stackV.setContentHuggingPriority(UILayoutPriority.init(250), for: NSLayoutConstraint.Axis.horizontal)
         _stackV.spacing = 8
-
         _stackV.addArrangedSubview(_labelName)
         _stackV.addArrangedSubview(_labelCode)
-        _stackV.backgroundColor = .blue
+//        _stackV.backgroundColor = .blue
 
         _labelFlag.translatesAutoresizingMaskIntoConstraints = false;
         _labelFlag.textColor = .label
         _labelFlag.textAlignment = .center
-        _labelFlag.backgroundColor = .yellow
+//        _labelFlag.backgroundColor = .yellow
 
         _stackH.translatesAutoresizingMaskIntoConstraints = false;
         _stackH.axis  = .horizontal
@@ -89,7 +88,7 @@ class CountryCellView: UITableViewCell {
         _stackH.alignment =  .center
         _stackH.contentMode = .scaleToFill
         _stackH.spacing = 8
-        _stackH.backgroundColor = .orange
+//        _stackH.backgroundColor = .orange
 
         _stackH.addArrangedSubview(_labelFlag)
         _stackH.addArrangedSubview(_stackV)
