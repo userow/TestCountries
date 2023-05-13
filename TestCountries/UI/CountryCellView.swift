@@ -126,7 +126,7 @@ class CountryCellView: UITableViewCell {
 	// MARK: - displayed data manipulation
 
     func configure(countryInfo: CountryInfo?) {
-        print("countryInfo = \(countryInfo), \(countryInfo?.name), \(countryInfo?.code), \(countryInfo?.flagSymbol)")
+        print("countryInfo = \(String(describing: countryInfo)), \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
         _labelName.text = countryInfo?.name ?? ""
         _labelCode.text = countryInfo?.code ?? ""
         _labelFlag.text = countryInfo?.flagSymbol ?? ""

@@ -219,17 +219,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         _isFlaggOn = !_isFlaggOn
         _buttonFlag.image = _isFlaggOn ? UIImage(systemName: "flag.fill") : UIImage(systemName: "flag")
 
-        //TODO: Table update
-        let nextCellState = CountryCellState(isFlagOn: _isFlaggOn,
-                                             isCodeOn: _isCodeOn,
-                                             highlightedText: "")
-        _tableView.beginUpdates()
-        _tableView.visibleCells.forEach { cell in
-            if let countryCell = cell as? CountryCellView {
-                countryCell.updateAppearance(nextCellState, animated: true)
-            }
-        }
-        _tableView.endUpdates()
+        //Table update - on state change
+        updateCellsState()
     }
 
     @objc
@@ -237,7 +228,11 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         _isCodeOn = !_isCodeOn
         _buttonCode.image = _isCodeOn ? UIImage(systemName: "number.square.fill") : UIImage(systemName: "number.square")
 
-        //TODO: Table update
+        //Table update - on state change
+        updateCellsState()
+    }
+
+    private func updateCellsState() {
         let nextCellState = CountryCellState(isFlagOn: _isFlaggOn,
                                              isCodeOn: _isCodeOn,
                                              highlightedText: "")
@@ -247,6 +242,14 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
             if let countryCell = cell as? CountryCellView {
                 countryCell.updateAppearance(nextCellState, animated: true)
             }
+        }
+        //Workaround - max visible + 1 is not being refreshed
+        if let maxRow = _tableView.indexPathsForVisibleRows?.last {
+           let nextRow = IndexPath(row: maxRow.row + 1, section: maxRow.section)
+            if let cell = _tableView.cellForRow(at: nextRow) as? CountryCellView {
+                cell.updateAppearance(nextCellState, animated: true)
+            }
+
         }
         _tableView.endUpdates()
     }
