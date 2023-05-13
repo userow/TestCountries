@@ -35,7 +35,6 @@ class CountryCellView: UITableViewCell {
     private let _stackH = UIStackView()
 
     // MARK: state variables
-    private var _countryInfo: CountryInfo? = nil
     private var _state =  CountryCellState()
 
 	// MARK: - Initialize
@@ -60,7 +59,6 @@ class CountryCellView: UITableViewCell {
         _labelName.numberOfLines = 0
         _labelName.textColor = .label
         _labelName.textAlignment = .justified
-        _labelName.setContentHuggingPriority(UILayoutPriority.defaultLow, for: NSLayoutConstraint.Axis.horizontal)
         _labelName.backgroundColor = .red
 
         _labelCode.translatesAutoresizingMaskIntoConstraints = false
@@ -69,10 +67,11 @@ class CountryCellView: UITableViewCell {
         _labelCode.backgroundColor = .green
 
         _stackV.translatesAutoresizingMaskIntoConstraints = false;
-        _stackV.axis = NSLayoutConstraint.Axis.vertical
-        _stackV.distribution  = UIStackView.Distribution.fill
+        _stackV.axis = .vertical
+        _stackV.distribution  = .fill
         _stackV.alignment = UIStackView.Alignment.leading
         _stackV.contentMode = .scaleToFill
+        _stackV.setContentHuggingPriority(UILayoutPriority.init(250), for: NSLayoutConstraint.Axis.horizontal)
         _stackV.spacing = 8
 
         _stackV.addArrangedSubview(_labelName)
@@ -85,9 +84,9 @@ class CountryCellView: UITableViewCell {
         _labelFlag.backgroundColor = .yellow
 
         _stackH.translatesAutoresizingMaskIntoConstraints = false;
-        _stackH.axis  = NSLayoutConstraint.Axis.horizontal
-        _stackH.distribution  = UIStackView.Distribution.equalSpacing
-        _stackH.alignment = UIStackView.Alignment.center
+        _stackH.axis  = .horizontal
+        _stackH.distribution  = .fill
+        _stackH.alignment =  .center
         _stackH.contentMode = .scaleToFill
         _stackH.spacing = 8
         _stackH.backgroundColor = .orange
@@ -119,18 +118,14 @@ class CountryCellView: UITableViewCell {
     override func prepareForReuse() {
         _state = CountryCellState()
 
-        _countryInfo = nil
-
-        _labelName.text = nil
-        _labelCode.text = nil
-        _labelFlag.text = nil
+        _labelName.text = ""
+        _labelCode.text = ""
+        _labelFlag.text = ""
     }
 	
 	// MARK: - displayed data manipulation
 
     func configure(countryInfo: CountryInfo?) {
-        _countryInfo = countryInfo
-
         print("countryInfo = \(countryInfo), \(countryInfo?.name), \(countryInfo?.code), \(countryInfo?.flagSymbol)")
         _labelName.text = countryInfo?.name ?? ""
         _labelCode.text = countryInfo?.code ?? ""
