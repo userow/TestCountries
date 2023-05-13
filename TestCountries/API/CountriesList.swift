@@ -12,6 +12,7 @@ class CountriesList: NSObject {
 	// MARK: - Declarations. Private
 	
 	private var _countries = [CountryInfo]()
+    private var _orderedCountries = [CountryInfo]()
 	
 	// MARK: - Initialize
 	
@@ -295,6 +296,11 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
                                       flagSymbol: _countries.first?.flagSymbol ?? "-",
                                       code: _countries.first?.code ?? "-"
 									 ))
+
+        let ordered = _countries.sorted { (lhs, rhs) -> Bool in
+            return (lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending)
+        }
+        _orderedCountries = ordered
 	}
 	
 	// MARK: - Public
@@ -304,6 +310,10 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 	}
 	
 	// MARK: -
+
+    var orderedCountries: [CountryInfo] {
+        return _orderedCountries
+    }
 
 }
 
