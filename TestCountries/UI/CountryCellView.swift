@@ -34,9 +34,6 @@ class CountryCellView: UITableViewCell {
     private let _stackV = UIStackView()
     private let _stackH = UIStackView()
 
-    // MARK: state variables
-    private var _state =  CountryCellState()
-
 	// MARK: - Initialize
 
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -69,7 +66,7 @@ class CountryCellView: UITableViewCell {
         _stackV.translatesAutoresizingMaskIntoConstraints = false;
         _stackV.axis = .vertical
         _stackV.distribution  = .fill
-        _stackV.alignment = UIStackView.Alignment.leading
+        _stackV.alignment = .leading
         _stackV.contentMode = .scaleToFill
         _stackV.setContentHuggingPriority(UILayoutPriority.init(250), for: NSLayoutConstraint.Axis.horizontal)
         _stackV.spacing = 8
@@ -115,11 +112,8 @@ class CountryCellView: UITableViewCell {
     static let cellReuseId = "CountryCellView"
 
     override func prepareForReuse() {
-        _state = CountryCellState()
-
-        _labelName.text = ""
-        _labelCode.text = ""
-        _labelFlag.text = ""
+        configure(countryInfo: nil)
+        updateAppearance(CountryCellState())
     }
 	
 	// MARK: - displayed data manipulation
@@ -133,18 +127,7 @@ class CountryCellView: UITableViewCell {
 
     func updateAppearance(_ state: CountryCellState, animated: Bool = false) {
         //Show - Hide Animation
-        if animated {
-            let propAnimator = UIViewPropertyAnimator(duration: kAnimationDuration, curve: .easeInOut) {
-                if self._labelFlag.isHidden != !state.isFlagOn {
-                    self._labelFlag.isHidden = !state.isFlagOn
-                }
-
-                if self._labelCode.isHidden != !state.isCodeOn {
-                    self._labelCode.isHidden = !state.isCodeOn
-                }
-            }
-            propAnimator.startAnimation()
-        } else {
+        let changes = {
             if self._labelFlag.isHidden != !state.isFlagOn {
                 self._labelFlag.isHidden = !state.isFlagOn
             }
@@ -153,6 +136,14 @@ class CountryCellView: UITableViewCell {
                 self._labelCode.isHidden = !state.isCodeOn
             }
         }
+        if animated {
+            let propAnimator = UIViewPropertyAnimator(duration: kAnimationDuration, curve: .easeInOut) {
+                changes()
+            }
+            propAnimator.startAnimation()
+        } else {
+            changes()
+        }
 
         //Text Highlighting
         highlighText(state.highlightedText, in: _labelName)
@@ -160,8 +151,6 @@ class CountryCellView: UITableViewCell {
         if state.isCodeOn {
             highlighText(state.highlightedText, in: _labelCode)
         }
-
-        _state = state
     }
 
     private func highlighText(_ text: String, in label: UILabel) {
