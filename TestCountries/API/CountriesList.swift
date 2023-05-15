@@ -332,7 +332,8 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
     }
 
     func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
-                                             nextCountries: [CountryInfo]) -> (addedIndexes: [IndexPath], removedIndexes: [IndexPath]) {
+                                             nextCountries: [CountryInfo]) -> (addedIndexes: [IndexPath],
+                                                                               removedIndexes: [IndexPath]) {
         var addedIndexes = [IndexPath]()
         var removedIndexes = [IndexPath]()
 

@@ -20,6 +20,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
     private var _isFlaggOn = false
     private var _isCodeOn = false
 
+    private var _currentCountries = [CountryInfo]()
+
     // MARK: subviews
 	private let _navigationItem = UINavigationItem()
 	private let _navigationBar = UINavigationBar()
@@ -75,10 +77,12 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		_buttonFlag = UIBarButtonItem(image: UIImage(systemName: "flag"), style: .plain, target: self, action: #selector(onButtonFlagDidTap))
         _buttonCode = UIBarButtonItem(image: UIImage(systemName: "number.square"), style: .plain, target: self, action: #selector(onButtonCodeDidTap))
         _labelToolbarItem = UIBarButtonItem(customView: _labelToolbar)
-        _labelToolbar.text = "" // 50 of 250
+        _labelToolbar.text = "250 of 250"
 		_toolBar.items = [_buttonFlag, _spacer, _buttonCode, _spacerFlexible, _labelToolbarItem]
 
 		self.addSubview(_toolBar)
+
+        _initDataSource()
 	}
 	
 	required init?(coder: NSCoder) {
@@ -86,6 +90,10 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	}
 	
 	// MARK: - Private
+
+    private func _initDataSource() {
+        _currentCountries = CountriesList.shared.orderedCountries
+    }
 
     private func _currentState() -> CountryCellState {
         return CountryCellState(isFlagOn: _isFlaggOn, isCodeOn: _isCodeOn, highlightedText: _searchText ?? "")
@@ -120,7 +128,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
             self._tableView.frame = nextTableViewFrame
             self._searchBar.alpha = nextSbAlpha
         }
-        //TODO: change tableView heigh in responce to keyboard apperance
+        //TODO: ??? change tableView heigh in responce to keyboard apperance - wasn't shown in video
         if animated {
             let propAnimator = UIViewPropertyAnimator(duration: kAnimationDuration, curve: .easeInOut) {
                 changes()
@@ -132,12 +140,6 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         self.setNeedsLayout()
 	}
-
-    deinit {
-        //unsigning from notifications (keyboard)
-        NotificationCenter.default.removeObserver(self)
-    }
-
     /**
      вводная:
 
@@ -153,31 +155,36 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
      - задать новый dataSource вместо старого
      - запустить tableView.performBatchUpdates
      */
-    private func setSearchText(_ searchText: String?) {
+    private func _setSearchText(_ searchText: String?) {
         if let text = searchText {
             _searchText = text
 
             if text.count > 0 {
-
-
-                let state = _currentState()
-
-                let nextCountries = CountriesList.shared.filterCountries(state: state)
+                let nextCountries = CountriesList.shared.filterCountries(state: _currentState())
 
                 if nextCountries.count > 0 {
-                    //TODO: calculate indices of FIRST filtering out
+                    //TODO: calculate indexes of filtering out
+                    let indexes = CountriesList.shared.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
+                                                                                           nextCountries: nextCountries)
                     // implement saving of data
+                    _currentCountries = nextCountries
 
                     _tableView.performBatchUpdates({
                         //TODO: batch delete
-                        //                    _tableView.deleteRows(at: [IndexPath](), with: .fade)
-                        //
-                    }, completion: { (animationFinishedSuccessfully /*Bool*/) in
-
-                    })
+                        _tableView.deleteRows(at: indexes.removedIndexes, with: .fade)
+                        _tableView.insertRows(at: indexes.addedIndexes, with: .fade)
+                    }) //, completion: { animationFinishedSuccessfully /*Bool*/ in
+  //                  })
+                    _updateCount()
                 } else {
-                    //TODO: show empty view ?
+                    //TODO: ??? show empty view ? show empty table ? -  - wasn't shown in video
                 }
+            } else {
+                //let nextCountries = CountriesList.shared.orderedCountries
+
+                // visible index paths + 1
+                //_tableView.performBatchUpdates({
+//                _tableView.reloadRows(at: [IndexPath](), with: .fade)
             }
         }
 	}
@@ -195,6 +202,17 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 //            }
 //        }, completion: nil)
 //    }
+
+    private func _updateCount() {
+        let current = _currentCountries.count
+        let total = CountriesList.shared.orderedCountries.count
+
+        if (current != total) {
+            _labelToolbar.text = "\(current) of \(total)"
+        } else {
+            _labelToolbar.text = ""
+        }
+    }
 	
 	// MARK: - Layout
 	
@@ -234,11 +252,11 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	// MARK: - UITableViewDataSource
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return CountriesList.shared.countries.count
+		return _currentCountries.count
 	}
 	
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let countryInfo = CountriesList.shared.orderedCountries[indexPath.row]
+        let countryInfo = _currentCountries[indexPath.row]
         let state = _currentState()
 
         if let cell = tableView.dequeueReusableCell(withIdentifier: CountryCellView.cellReuseId, for: indexPath) as? CountryCellView {
@@ -259,8 +277,19 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	// MARK: - UISearchBarDelegate
 	
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-		self.setSearchText(searchText)
+        NSLog("searchBar - seatchText = \(searchText)")
+		self._setSearchText(searchText)
 	}
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        _searchBar.resignFirstResponder()
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        _searchText = ""
+        //TODO: ??
+        _searchBar.resignFirstResponder()
+    }
 	
 	// MARK: - Events
 	
@@ -288,9 +317,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
     }
 
     private func updateCellsState() {
-        let nextCellState = CountryCellState(isFlagOn: _isFlaggOn,
-                                             isCodeOn: _isCodeOn,
-                                             highlightedText: "")
+        let nextCellState = _currentState()
 
         _tableView.beginUpdates()
         _tableView.visibleCells.forEach { cell in
@@ -298,7 +325,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                 countryCell.updateAppearance(nextCellState, animated: true)
             }
         }
-        //Workaround - max visible + 1 was not being refreshed
+        //Workaround - max(visible) + 1 was not being refreshed
         if let maxRow = _tableView.indexPathsForVisibleRows?.last {
            let nextRow = IndexPath(row: maxRow.row + 1, section: maxRow.section)
             if let cell = _tableView.cellForRow(at: nextRow) as? CountryCellView {
