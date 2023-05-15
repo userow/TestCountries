@@ -127,22 +127,27 @@ class CountryCellView: UITableViewCell {
 
     func updateAppearance(_ state: CountryCellState, animated: Bool = false) {
         //Show - Hide Animation
-        let changes = {
-            if self._labelFlag.isHidden != !state.isFlagOn {
-                self._labelFlag.isHidden = !state.isFlagOn
-            }
+        let flagSwitched = (_labelFlag.isHidden != !state.isFlagOn)
+        let codeSwitched = (_labelCode.isHidden != !state.isCodeOn)
 
-            if self._labelCode.isHidden != !state.isCodeOn {
-                self._labelCode.isHidden = !state.isCodeOn
+        if flagSwitched || codeSwitched {
+            let changes = {
+                if flagSwitched {
+                    self._labelFlag.isHidden = !state.isFlagOn
+                }
+
+                if codeSwitched {
+                    self._labelCode.isHidden = !state.isCodeOn
+                }
             }
-        }
-        if animated {
-            let propAnimator = UIViewPropertyAnimator(duration: kAnimationDuration, curve: .easeInOut) {
+            if animated {
+                let propAnimator = UIViewPropertyAnimator(duration: kAnimationDuration, curve: .easeInOut) {
+                    changes()
+                }
+                propAnimator.startAnimation()
+            } else {
                 changes()
             }
-            propAnimator.startAnimation()
-        } else {
-            changes()
         }
 
         //Text Highlighting

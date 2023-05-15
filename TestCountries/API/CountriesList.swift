@@ -315,6 +315,41 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
         return _orderedCountries
     }
 
+    func filterCountries(state: CountryCellState) -> [CountryInfo] {
+        let searchText = state.highlightedText.lowercased()
+
+        let filteredArray = _orderedCountries.filter { countryInfo in
+            var includeInResult = false
+            includeInResult = countryInfo.name.lowercased().contains(searchText)
+
+            if !includeInResult && state.isCodeOn {
+                includeInResult = includeInResult || countryInfo.code.lowercased().contains(searchText)
+            }
+            return includeInResult
+        }
+
+        return filteredArray
+    }
+
+    func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
+                                             nextCountries: [CountryInfo]) -> (addedIndexes: [IndexPath], removedIndexes: [IndexPath]) {
+        var addedIndexes = [IndexPath]()
+        var removedIndexes = [IndexPath]()
+
+        for (index, country) in nextCountries.enumerated() {
+            if !currentCountries.contains(country) {
+                addedIndexes.append(IndexPath(row: index, section: 0))
+            }
+        }
+
+        for (index, country) in currentCountries.enumerated() {
+            if !nextCountries.contains(country) {
+                removedIndexes.append(IndexPath(row: index, section: 0))
+            }
+        }
+
+        return (addedIndexes, removedIndexes)
+    }
 }
 
 

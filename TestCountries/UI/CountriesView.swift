@@ -134,12 +134,67 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	}
 
     deinit {
-
+        //unsigning from notifications (keyboard)
+        NotificationCenter.default.removeObserver(self)
     }
-	
-	private func setSearchText(_ searchText: String?) {
-		
+
+    /**
+     вводная:
+
+     есть:
+     - orderedCountries
+     - searchText
+     в случае второй и далее фильтраций (ввод A -> As -> Ask -> As) - есть предыдущий результат
+
+     нужно:
+     - (ввести локальную переменную currentCountries),
+     + получить новый dataSource - nextCountries [CountryInfo],
+     - по новому и старому dataSource получить массивы индексов [IndexPath] для использования в tableView.performBatchUpdates - add, remove, ? update (все остальные)
+     - задать новый dataSource вместо старого
+     - запустить tableView.performBatchUpdates
+     */
+    private func setSearchText(_ searchText: String?) {
+        if let text = searchText {
+            _searchText = text
+
+            if text.count > 0 {
+
+
+                let state = _currentState()
+
+                let nextCountries = CountriesList.shared.filterCountries(state: state)
+
+                if nextCountries.count > 0 {
+                    //TODO: calculate indices of FIRST filtering out
+                    // implement saving of data
+
+                    _tableView.performBatchUpdates({
+                        //TODO: batch delete
+                        //                    _tableView.deleteRows(at: [IndexPath](), with: .fade)
+                        //
+                    }, completion: { (animationFinishedSuccessfully /*Bool*/) in
+
+                    })
+                } else {
+                    //TODO: show empty view ?
+                }
+            }
+        }
 	}
+
+//    func updateSearchResults(for searchController: UISearchController) {
+//        let searchText = searchController.searchBar.text ?? ""
+//        filteredData = originalData.filter { $0.localizedCaseInsensitiveContains(searchText) }
+//        tableView.performBatchUpdates({
+//            if filteredData.isEmpty {
+//                tableView.deleteSections([0], with: .fade)
+//            } else if originalData.count == filteredData.count {
+//                tableView.insertSections([0], with: .fade)
+//            } else {
+//                tableView.reloadSections([0], with: .fade)
+//            }
+//        }, completion: nil)
+//    }
 	
 	// MARK: - Layout
 	
@@ -243,7 +298,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                 countryCell.updateAppearance(nextCellState, animated: true)
             }
         }
-        //Workaround - max visible + 1 is not being refreshed
+        //Workaround - max visible + 1 was not being refreshed
         if let maxRow = _tableView.indexPathsForVisibleRows?.last {
            let nextRow = IndexPath(row: maxRow.row + 1, section: maxRow.section)
             if let cell = _tableView.cellForRow(at: nextRow) as? CountryCellView {

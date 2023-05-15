@@ -45,4 +45,4 @@ public class CountryInfo: NSObject {
 
 }
 
-
+//TODO: ??? (if can't be compared without Equatable)
