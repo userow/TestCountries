@@ -119,7 +119,7 @@ class CountryCellView: UITableViewCell {
 	// MARK: - displayed data manipulation
 
     func configure(countryInfo: CountryInfo?) {
-        print("countryInfo = \(String(describing: countryInfo)), \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
+//        print("countryInfo = \(String(describing: countryInfo)), \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
         _labelName.text = countryInfo?.name ?? ""
         _labelCode.text = countryInfo?.code ?? ""
         _labelFlag.text = countryInfo?.flagSymbol ?? ""
@@ -159,13 +159,12 @@ class CountryCellView: UITableViewCell {
     }
 
     private func highlighText(_ text: String, in label: UILabel) {
-        if text.count > 0 {
-            if let wholeText = label.text,
-                let attrText = label.attributedText {
-                let mutableAttrText = NSMutableAttributedString(attributedString: attrText)
+        if let wholeText = label.text,
+           let attrText = label.attributedText {
+            let mutableAttrText = NSMutableAttributedString(attributedString: attrText)
+            mutableAttrText.removeAttribute(NSAttributedString.Key.backgroundColor, range: NSMakeRange(0, mutableAttrText.length))
 
-                mutableAttrText.removeAttribute(NSAttributedString.Key.backgroundColor, range: NSMakeRange(0, mutableAttrText.length))
-
+            if text.count > 0 {
                 if let range = wholeText.range(of: text, options: String.CompareOptions.caseInsensitive),
                    let color = UIColor.textHighlightColor {
                     let convertedRange = NSRange(range, in: wholeText)

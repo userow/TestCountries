@@ -183,8 +183,11 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                     _tableView.deleteRows(at: indexes.deleteIndexes, with: .fade)
                     _tableView.insertRows(at: indexes.addIndexes, with: .fade)
                 }, completion: { animationFinishedSuccessfully /*Bool*/ in
-                    self.updateCellsState()
-                    self._updateCount()
+                    NSLog("completed batch - updating count and visible cells")
+                    DispatchQueue.main.async {
+                        self.updateCellsState()
+                        self._updateCount()
+                    }
                 })
 
 //            } else {
@@ -199,9 +202,14 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         if (current != total) {
             _labelToolbar.text = "\(current) of \(total)"
-            if let items = _toolBar.items, !items.contains(_labelToolbarItem) {
-                _toolBar.items?.append(_labelToolbarItem)
+
+            if let items = _toolBar.items,
+               let index = items.firstIndex(of:_labelToolbarItem) {
+                _toolBar.items?.remove(at: index)
             }
+
+            _toolBar.items?.append(_labelToolbarItem)
+            
         } else {
             if let items = _toolBar.items,
                 let index = items.firstIndex(of:_labelToolbarItem) {
@@ -274,7 +282,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	// MARK: - UISearchBarDelegate
 	
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        NSLog("searchBar - searchText = \(searchText)")
+        NSLog("searchBar - searchText = '\(searchText)'")
 		self._setSearchText(searchText)
 	}
 
@@ -316,6 +324,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
     private func updateCellsState() {
         let nextCellState = _currentState()
+
+        NSLog("updateCellsState - nextCellState = \(nextCellState)")
 
         _tableView.beginUpdates()
         _tableView.visibleCells.forEach { cell in
