@@ -172,6 +172,7 @@ class CountryCellView: UITableViewCell {
                     mutableAttrText.addAttribute(NSAttributedString.Key.backgroundColor,
                                                  value: color,
                                                  range: convertedRange)
+                    label.attributedText = mutableAttrText
                 }
             }
         }

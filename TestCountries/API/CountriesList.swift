@@ -332,24 +332,24 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
     }
 
     func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
-                                             nextCountries: [CountryInfo]) -> (addedIndexes: [IndexPath],
-                                                                               removedIndexes: [IndexPath]) {
-        var addedIndexes = [IndexPath]()
-        var removedIndexes = [IndexPath]()
+                                             nextCountries: [CountryInfo]) -> (addIndexes: [IndexPath],
+                                                                          deleteIndexes: [IndexPath]) {
+        var addIndexes = [IndexPath]()
+        var deleteIndexes = [IndexPath]()
 
         for (index, country) in nextCountries.enumerated() {
             if !currentCountries.contains(country) {
-                addedIndexes.append(IndexPath(row: index, section: 0))
+                addIndexes.append(IndexPath(row: index, section: 0))
             }
         }
 
         for (index, country) in currentCountries.enumerated() {
             if !nextCountries.contains(country) {
-                removedIndexes.append(IndexPath(row: index, section: 0))
+                deleteIndexes.append(IndexPath(row: index, section: 0))
             }
         }
 
-        return (addedIndexes, removedIndexes)
+        return (addIndexes, deleteIndexes)
     }
 }
 

@@ -13,9 +13,8 @@ public let kAnimationDuration = 0.3
 
 class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 	
-	// MARK: - Declarations. Private
-    private var _isSearching = true //false
-
+	// MARK: - Declarations. Private. State variables.
+    private var _isSearching = false //false
 	private var _searchText: String? = nil
     private var _isFlaggOn = false
     private var _isCodeOn = false
@@ -55,6 +54,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		
 		_searchBar.showsCancelButton = true
 		_searchBar.delegate = self
+        _searchBar.alpha = _isSearching ? 1.0 : 0.0
 		_searchBar.isHidden = !_isSearching
 		
 		_tableView.rowHeight = UITableView.automaticDimension
@@ -76,9 +76,11 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
 		_buttonFlag = UIBarButtonItem(image: UIImage(systemName: "flag"), style: .plain, target: self, action: #selector(onButtonFlagDidTap))
         _buttonCode = UIBarButtonItem(image: UIImage(systemName: "number.square"), style: .plain, target: self, action: #selector(onButtonCodeDidTap))
+
+        _labelToolbar.text = "999 of 999"
         _labelToolbarItem = UIBarButtonItem(customView: _labelToolbar)
-        _labelToolbar.text = "250 of 250"
-		_toolBar.items = [_buttonFlag, _spacer, _buttonCode, _spacerFlexible, _labelToolbarItem]
+
+        _toolBar.items = [_buttonFlag, _spacer, _buttonCode, _spacerFlexible];//, _labelToolbarItem]
 
 		self.addSubview(_toolBar)
 
@@ -99,7 +101,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         return CountryCellState(isFlagOn: _isFlaggOn, isCodeOn: _isCodeOn, highlightedText: _searchText ?? "")
     }
 
-	private func setIsSearching(_ isSearching: Bool, animated: Bool) {
+	private func _setIsSearching(_ isSearching: Bool, animated: Bool) {
         _isSearching = isSearching
         print("isSearching = \(isSearching)")
 
@@ -108,6 +110,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         var nextSearchBarFrame = _searchBar.frame
         var nextSbAlpha = 0.0
         var nextTableViewFrame = _tableView.frame
+        var nextSbHidden = true
         //move _table top part, activate | deactivate first responder.
 
         if _isSearching {
@@ -115,18 +118,21 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
             nextTableViewFrame.origin.y = nextSearchBarFrame.maxY
             nextTableViewFrame.size.height = nextTableViewFrame.height + nextSearchBarFrame.height
             nextSbAlpha = 1.0
+            nextSbHidden = false
             _searchBar.becomeFirstResponder()
         } else {
             nextSearchBarFrame.origin.y = navbarFrame.maxY - nextSearchBarFrame.height
             nextTableViewFrame.origin.y = navbarFrame.maxY
             nextTableViewFrame.size.height = nextTableViewFrame.height - nextSearchBarFrame.height
             nextSbAlpha = 0.0
+            nextSbHidden = true
             _searchBar.resignFirstResponder()
         }
         let changes = {
             self._searchBar.frame = nextSearchBarFrame
             self._tableView.frame = nextTableViewFrame
             self._searchBar.alpha = nextSbAlpha
+            self._searchBar.isHidden = nextSbHidden
         }
         //TODO: ??? change tableView heigh in responce to keyboard apperance - wasn't shown in video
         if animated {
@@ -156,52 +162,36 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
      - запустить tableView.performBatchUpdates
      */
     private func _setSearchText(_ searchText: String?) {
+        _searchText = searchText
         if let text = searchText {
-            _searchText = text
-
+            var nextCountries = [CountryInfo]()
             if text.count > 0 {
-                let nextCountries = CountriesList.shared.filterCountries(state: _currentState())
-
-                if nextCountries.count > 0 {
-                    //TODO: calculate indexes of filtering out
-                    let indexes = CountriesList.shared.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
-                                                                                           nextCountries: nextCountries)
-                    // implement saving of data
-                    _currentCountries = nextCountries
-
-                    _tableView.performBatchUpdates({
-                        //TODO: batch delete
-                        _tableView.deleteRows(at: indexes.removedIndexes, with: .fade)
-                        _tableView.insertRows(at: indexes.addedIndexes, with: .fade)
-                    }) //, completion: { animationFinishedSuccessfully /*Bool*/ in
-  //                  })
-                    _updateCount()
-                } else {
-                    //TODO: ??? show empty view ? show empty table ? -  - wasn't shown in video
-                }
+                nextCountries = CountriesList.shared.filterCountries(state: _currentState())
             } else {
-                //let nextCountries = CountriesList.shared.orderedCountries
-
-                // visible index paths + 1
-                //_tableView.performBatchUpdates({
-//                _tableView.reloadRows(at: [IndexPath](), with: .fade)
+                nextCountries = CountriesList.shared.orderedCountries
             }
+
+//            if nextCountries.count > 0 {
+                //TODO: calculate indexes of filtering out
+                let indexes = CountriesList.shared.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
+                                                                                       nextCountries: nextCountries)
+                // implement saving of data
+                _currentCountries = nextCountries
+
+                _tableView.performBatchUpdates({
+                    //TODO: batch delete
+                    _tableView.deleteRows(at: indexes.deleteIndexes, with: .fade)
+                    _tableView.insertRows(at: indexes.addIndexes, with: .fade)
+                }, completion: { animationFinishedSuccessfully /*Bool*/ in
+                    self.updateCellsState()
+                    self._updateCount()
+                })
+
+//            } else {
+//                //TODO: ??? show empty view ? show empty table ? -  - wasn't shown in video, no details in test task
+//            }
         }
 	}
-
-//    func updateSearchResults(for searchController: UISearchController) {
-//        let searchText = searchController.searchBar.text ?? ""
-//        filteredData = originalData.filter { $0.localizedCaseInsensitiveContains(searchText) }
-//        tableView.performBatchUpdates({
-//            if filteredData.isEmpty {
-//                tableView.deleteSections([0], with: .fade)
-//            } else if originalData.count == filteredData.count {
-//                tableView.insertSections([0], with: .fade)
-//            } else {
-//                tableView.reloadSections([0], with: .fade)
-//            }
-//        }, completion: nil)
-//    }
 
     private func _updateCount() {
         let current = _currentCountries.count
@@ -209,7 +199,14 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         if (current != total) {
             _labelToolbar.text = "\(current) of \(total)"
+            if let items = _toolBar.items, !items.contains(_labelToolbarItem) {
+                _toolBar.items?.append(_labelToolbarItem)
+            }
         } else {
+            if let items = _toolBar.items,
+                let index = items.firstIndex(of:_labelToolbarItem) {
+                _toolBar.items?.remove(at: index)
+            }
             _labelToolbar.text = ""
         }
     }
@@ -277,25 +274,24 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	// MARK: - UISearchBarDelegate
 	
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        NSLog("searchBar - seatchText = \(searchText)")
+        NSLog("searchBar - searchText = \(searchText)")
 		self._setSearchText(searchText)
 	}
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        _searchBar.resignFirstResponder()
+        _setIsSearching(false, animated: true)
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        _searchText = ""
-        //TODO: ??
-        _searchBar.resignFirstResponder()
+        _setSearchText("")
+        _setIsSearching(false, animated: true)
     }
 	
 	// MARK: - Events
 	
 	@objc
 	private func onButtonSearchDidTap() {
-		self.setIsSearching(!_isSearching, animated: true)
+		self._setIsSearching(!_isSearching, animated: true)
 	}
 	
 	@objc
@@ -312,8 +308,10 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         _isCodeOn = !_isCodeOn
         _buttonCode.image = _isCodeOn ? UIImage(systemName: "number.square.fill") : UIImage(systemName: "number.square")
 
-        //Table update - on state change
-        updateCellsState()
+        //TODO: re-do search if
+        if let _searchText, _searchText.count > 0 {
+            _setSearchText(_searchText)
+        }
     }
 
     private func updateCellsState() {
