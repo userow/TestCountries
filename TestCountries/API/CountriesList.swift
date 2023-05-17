@@ -332,24 +332,37 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
     }
 
     func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
-                                             nextCountries: [CountryInfo]) -> (addIndexes: [IndexPath],
-                                                                          deleteIndexes: [IndexPath]) {
-        var addIndexes = [IndexPath]()
-        var deleteIndexes = [IndexPath]()
+                                             nextCountries: [CountryInfo]) -> (addIndexes: [Int],
+                                                                               deleteIndexes: [Int],
+                                                                               commonIndexes: [Int]) {
+        var addIndexes = [Int]()
+        var deleteIndexes = [Int]()
+        var commonIndexes = [Int]()
 
         for (index, country) in nextCountries.enumerated() {
             if !currentCountries.contains(country) {
-                addIndexes.append(IndexPath(row: index, section: 0))
+                addIndexes.append(index)
+            } else if let currentIndex = currentCountries.firstIndex(of: country) {
+                commonIndexes.append(currentIndex)
             }
         }
 
         for (index, country) in currentCountries.enumerated() {
             if !nextCountries.contains(country) {
-                deleteIndexes.append(IndexPath(row: index, section: 0))
+                deleteIndexes.append(index)
             }
         }
+        return (addIndexes, deleteIndexes, commonIndexes)
+    }
 
-        return (addIndexes, deleteIndexes)
+    func convertIndexesToIndexPaths(_ cortege: (addIndexes: [Int],
+                                              deleteIndexes: [Int],
+                                              commonIndexes: [Int])) -> (addIndexPaths: [IndexPath],
+                                                                         deleteIndexPaths: [IndexPath],
+                                                                         commonIndexPaths: [IndexPath]) {
+        return (cortege.addIndexes.map { IndexPath(row: $0, section: 0) },
+                cortege.deleteIndexes.map { IndexPath(row: $0, section: 0) },
+                cortege.commonIndexes.map { IndexPath(row: $0, section: 0) })
     }
 }
 

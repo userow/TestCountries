@@ -175,19 +175,26 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                 //TODO: calculate indexes of filtering out
                 let indexes = CountriesList.shared.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
                                                                                        nextCountries: nextCountries)
+                NSLog("_setSearchText - indexesADD = \n\(indexes.addIndexes)")
+                NSLog("_setSearchText - indexesDEL = \n\(indexes.deleteIndexes)")
+                NSLog("_setSearchText - indexesREL = \n\(indexes.commonIndexes)")
+
                 // implement saving of data
                 _currentCountries = nextCountries
+                let changes = CountriesList.shared.convertIndexesToIndexPaths(indexes)
 
                 _tableView.performBatchUpdates({
                     //TODO: batch delete
-                    _tableView.deleteRows(at: indexes.deleteIndexes, with: .fade)
-                    _tableView.insertRows(at: indexes.addIndexes, with: .fade)
+                    _tableView.deleteRows(at: changes.deleteIndexPaths, with: .automatic)
+                    _tableView.insertRows(at: changes.addIndexPaths, with: .automatic)
+                    _tableView.reloadRows(at: changes.commonIndexPaths, with: .automatic)
+
                 }, completion: { animationFinishedSuccessfully /*Bool*/ in
-                    NSLog("completed batch - updating count and visible cells")
-                    DispatchQueue.main.async {
-                        self.updateCellsState()
-                        self._updateCount()
-                    }
+//                    NSLog("completed batch - updating count and visible cells")
+////                    DispatchQueue.main.async {
+//                        self.updateCellsState()
+//                        self._updateCount()
+////                    }
                 })
 
 //            } else {
@@ -327,6 +334,17 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         NSLog("updateCellsState - nextCellState = \(nextCellState)")
 
+//        guard let indexesConst = _tableView.indexPathsForVisibleRows,
+//        let maxRow = indexesConst.last else { return }
+//
+//        var indexes = indexesConst
+//        let nextRow = IndexPath(row: maxRow.row + 1, section: maxRow.section)
+//        indexes.append(nextRow)
+//
+//        _tableView.performBatchUpdates {
+//            _tableView.reloadRows(at: indexes, with: .automatic)
+//        }
+//
         _tableView.beginUpdates()
         _tableView.visibleCells.forEach { cell in
             if let countryCell = cell as? CountryCellView {
@@ -343,9 +361,6 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         }
         _tableView.endUpdates()
     }
-
-	// MARK: -
-
 }
 
 

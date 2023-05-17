@@ -119,7 +119,7 @@ class CountryCellView: UITableViewCell {
 	// MARK: - displayed data manipulation
 
     func configure(countryInfo: CountryInfo?) {
-//        print("countryInfo = \(String(describing: countryInfo)), \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
+        NSLog("countryInfo = \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
         _labelName.text = countryInfo?.name ?? ""
         _labelCode.text = countryInfo?.code ?? ""
         _labelFlag.text = countryInfo?.flagSymbol ?? ""
@@ -163,7 +163,7 @@ class CountryCellView: UITableViewCell {
            let attrText = label.attributedText {
             let mutableAttrText = NSMutableAttributedString(attributedString: attrText)
             mutableAttrText.removeAttribute(NSAttributedString.Key.backgroundColor, range: NSMakeRange(0, mutableAttrText.length))
-
+            NSLog("highlighText - DELETED highlight for \(wholeText)")
             if text.count > 0 {
                 if let range = wholeText.range(of: text, options: String.CompareOptions.caseInsensitive),
                    let color = UIColor.textHighlightColor {
