@@ -56,12 +56,10 @@ class CountryCellView: UITableViewCell {
         _labelName.numberOfLines = 0
         _labelName.textColor = .label
         _labelName.textAlignment = .justified
-//        _labelName.backgroundColor = .red
 
         _labelCode.translatesAutoresizingMaskIntoConstraints = false
         _labelCode.textColor = .secondaryLabel
         _labelCode.textAlignment = .justified
-//        _labelCode.backgroundColor = .green
 
         _stackV.translatesAutoresizingMaskIntoConstraints = false;
         _stackV.axis = .vertical
@@ -72,12 +70,10 @@ class CountryCellView: UITableViewCell {
         _stackV.spacing = 8
         _stackV.addArrangedSubview(_labelName)
         _stackV.addArrangedSubview(_labelCode)
-//        _stackV.backgroundColor = .blue
 
         _labelFlag.translatesAutoresizingMaskIntoConstraints = false;
         _labelFlag.textColor = .label
         _labelFlag.textAlignment = .center
-//        _labelFlag.backgroundColor = .yellow
 
         _stackH.translatesAutoresizingMaskIntoConstraints = false;
         _stackH.axis  = .horizontal
@@ -85,7 +81,6 @@ class CountryCellView: UITableViewCell {
         _stackH.alignment =  .center
         _stackH.contentMode = .scaleToFill
         _stackH.spacing = 8
-//        _stackH.backgroundColor = .orange
 
         _stackH.addArrangedSubview(_labelFlag)
         _stackH.addArrangedSubview(_stackV)
@@ -99,9 +94,6 @@ class CountryCellView: UITableViewCell {
             _stackH.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             _stackH.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             _stackH.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-
-//            _labelFlag.widthAnchor.constraint(equalToConstant: 44),
-//            _labelFlag.heightAnchor.constraint(equalToConstant: 44),
         ])
     }
 	
@@ -118,6 +110,7 @@ class CountryCellView: UITableViewCell {
 	
 	// MARK: - displayed data manipulation
 
+    /// data displaying / prepare for reuse in case of nil
     func configure(countryInfo: CountryInfo?) {
         NSLog("countryInfo = \(countryInfo?.name ?? ""), \(countryInfo?.code ?? ""), \(countryInfo?.flagSymbol ?? "")")
         _labelName.text = countryInfo?.name ?? ""
@@ -125,8 +118,9 @@ class CountryCellView: UITableViewCell {
         _labelFlag.text = countryInfo?.flagSymbol ?? ""
     }
 
+    /// appearance update - flag / code / text highlight
     func updateAppearance(_ state: CountryCellState, animated: Bool = false) {
-        //Show - Hide Animation
+        // Show - Hide Animation
         let flagSwitched = (_labelFlag.isHidden != !state.isFlagOn)
         let codeSwitched = (_labelCode.isHidden != !state.isCodeOn)
 
@@ -150,7 +144,7 @@ class CountryCellView: UITableViewCell {
             }
         }
 
-        //Text Highlighting
+        // Text Highlighting
         highlighText(state.highlightedText, in: _labelName)
 
         if state.isCodeOn {

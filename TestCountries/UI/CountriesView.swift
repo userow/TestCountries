@@ -7,18 +7,21 @@
 
 import UIKit
 
-// TODO: Implement
-
 public let kAnimationDuration = 0.3
 
 class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 	
 	// MARK: - Declarations. Private. State variables.
+    /// state of searchBart
     private var _isSearching = false //false
+    /// text entered from searchBar
 	private var _searchText: String? = nil
+    /// state of flag button on tabbar
     private var _isFlaggOn = false
+    /// state of flag button on tabbar
     private var _isCodeOn = false
 
+    /// current countries
     private var _currentCountries = [CountryInfo]()
 
     // MARK: subviews
@@ -67,12 +70,12 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		self.addSubview(_searchBar)
 		self.addSubview(_navigationBar)
 
+        //TODO: as constraint works only > 15.0 but Minimum deployment is 14.0 - use old bad KB Notifications.
 //        if #available(iOS 15.0, *) {
 //            self.keyboardLayoutGuide.topAnchor.constraint(equalToSystemSpacingBelow: _tableView.bottomAnchor, multiplier: 1.0).isActive = true
 //        } else {
 //            // Fallback on earlier versions
 //        }
-        //TODO: as constraint works only > 15.0 - use old bad KB Notifications.
 
 		_buttonFlag = UIBarButtonItem(image: UIImage(systemName: "flag"), style: .plain, target: self, action: #selector(onButtonFlagDidTap))
         _buttonCode = UIBarButtonItem(image: UIImage(systemName: "number.square"), style: .plain, target: self, action: #selector(onButtonCodeDidTap))
@@ -80,7 +83,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         _labelToolbar.text = "999 of 999"
         _labelToolbarItem = UIBarButtonItem(customView: _labelToolbar)
 
-        _toolBar.items = [_buttonFlag, _spacer, _buttonCode, _spacerFlexible];//, _labelToolbarItem]
+        _toolBar.items = [_buttonFlag, _spacer, _buttonCode, _spacerFlexible];
+        //, _labelToolbarItem]
 
 		self.addSubview(_toolBar)
 
@@ -103,7 +107,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
 	private func _setIsSearching(_ isSearching: Bool, animated: Bool) {
         _isSearching = isSearching
-        print("isSearching = \(isSearching)")
+        NSLog("isSearching = \(isSearching)")
 
         let navbarFrame = _navigationBar.frame
 
@@ -111,8 +115,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         var nextSbAlpha = 0.0
         var nextTableViewFrame = _tableView.frame
         var nextSbHidden = true
-        //move _table top part, activate | deactivate first responder.
 
+        //move _table top part - origin.Y, activate | deactivate first responder.
         if _isSearching {
             nextSearchBarFrame.origin.y = navbarFrame.maxY
             nextTableViewFrame.origin.y = nextSearchBarFrame.maxY
@@ -146,17 +150,17 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         self.setNeedsLayout()
 	}
-    /**
-     вводная:
 
-     есть:
+    /** ##вводная:
+
+     ###есть:
      - orderedCountries
      - searchText
-     в случае второй и далее фильтраций (ввод A -> As -> Ask -> As) - есть предыдущий результат
+     в случае второй и далее фильтраций (ввод A -> As -> Ask -> As или например As -> sl ) - есть предыдущий результат
 
-     нужно:
+     ###нужно:
      - (ввести локальную переменную currentCountries),
-     + получить новый dataSource - nextCountries [CountryInfo],
+     - получить новый dataSource - nextCountries [CountryInfo],
      - по новому и старому dataSource получить массивы индексов [IndexPath] для использования в tableView.performBatchUpdates - add, remove, ? update (все остальные)
      - задать новый dataSource вместо старого
      - запустить tableView.performBatchUpdates
@@ -171,33 +175,32 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                 nextCountries = CountriesList.shared.orderedCountries
             }
 
+            //TODO: ??? show empty view ? show empty table ? -  - wasn't shown in video, no details in test task description
 //            if nextCountries.count > 0 {
-                //TODO: calculate indexes of filtering out
-                let indexes = CountriesList.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
-                                                                                       nextCountries: nextCountries)
-                NSLog("_setSearchText - indexesADD = \n\(indexes.addIndexes)")
-                NSLog("_setSearchText - indexesDEL = \n\(indexes.deleteIndexes)")
-                NSLog("_setSearchText - indexesREL = \n\(indexes.commonIndexes)")
+            //calculate indexes for changes
+            let indexes = CountriesList.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
+                                                                            nextCountries: nextCountries)
+            NSLog("_setSearchText - indexesADD = \n\(indexes.addIndexes)")
+            NSLog("_setSearchText - indexesDEL = \n\(indexes.deleteIndexes)")
+            NSLog("_setSearchText - indexesREL = \n\(indexes.commonIndexes)")
 
-                // implement saving of data
-                _currentCountries = nextCountries
-                let changes = CountriesList.convertIndexesToIndexPaths(indexes)
+            // implement saving of data
+            _currentCountries = nextCountries
+            let changes = CountriesList.convertIndexesToIndexPaths(indexes)
 
-                _tableView.performBatchUpdates({
-                    //TODO: batch delete
-                    _tableView.deleteRows(at: changes.deleteIndexPaths, with: .automatic)
-                    _tableView.insertRows(at: changes.addIndexPaths, with: .automatic)
-                    _tableView.reloadRows(at: changes.commonIndexPaths, with: .automatic)
+            _tableView.performBatchUpdates({
+                // batch delete, insert, reload
+                _tableView.deleteRows(at: changes.deleteIndexPaths, with: .automatic)
+                _tableView.insertRows(at: changes.addIndexPaths, with: .automatic)
+                _tableView.reloadRows(at: changes.commonIndexPaths, with: .automatic)
 
-                }, completion: { animationFinishedSuccessfully /*Bool*/ in
-                    NSLog("completed batch - updating count and visible cells")
-                    DispatchQueue.main.async {
-                        self._updateCount()
-                    }
-                })
-
+            }, completion: { animationFinishedSuccessfully /*Bool*/ in
+                NSLog("completed batch - updating count and visible cells")
+                DispatchQueue.main.async {
+                    self._updateCount()
+                }
+            })
 //            } else {
-//                //TODO: ??? show empty view ? show empty table ? -  - wasn't shown in video, no details in test task
 //            }
         }
 	}
@@ -289,7 +292,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         NSLog("searchBar - searchText = '\(searchText)'")
-		self._setSearchText(searchText)
+		_setSearchText(searchText)
 	}
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -305,7 +308,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 	
 	@objc
 	private func onButtonSearchDidTap() {
-		self._setIsSearching(!_isSearching, animated: true)
+		_setIsSearching(!_isSearching, animated: true)
 	}
 	
 	@objc
@@ -322,7 +325,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         _isCodeOn = !_isCodeOn
         _buttonCode.image = _isCodeOn ? UIImage(systemName: "number.square.fill") : UIImage(systemName: "number.square")
 
-        //TODO: re-do search if
+        //re- searching if turning on / off country code
         if let _searchText, _searchText.count > 0 {
             _setSearchText(_searchText)
         } else {
@@ -336,6 +339,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
         NSLog("updateCellsState - nextCellState = \(nextCellState)")
 
+        // works bad - in case of FLAG appearing no fansy animation is applied
 //        guard let indexesConst = _tableView.indexPathsForVisibleRows,
 //        let maxRow = indexesConst.last else { return }
 //
@@ -347,13 +351,15 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 //            _tableView.reloadRows(at: indexes, with: .automatic)
 //        }
 
+        // works good enough but long cell label is not resized back during isFlagShown toggle 0-1-0
         _tableView.beginUpdates()
         _tableView.visibleCells.forEach { cell in
             if let countryCell = cell as? CountryCellView {
                 countryCell.updateAppearance(nextCellState, animated: true)
             }
         }
-        //Workaround - max(visible) + 1 was not being refreshed
+
+        // Workaround - max(visibleIndexes) + 1 cell was not being refreshed
         if let maxRow = _tableView.indexPathsForVisibleRows?.last {
            let nextRow = IndexPath(row: maxRow.row + 1, section: maxRow.section)
             if let cell = _tableView.cellForRow(at: nextRow) as? CountryCellView {

@@ -7,8 +7,6 @@
 
 import Foundation
 
-// TODO: Implement
-
 public class CountryInfo: NSObject {
 	
 	// MARK: - Declarations. Private
@@ -40,9 +38,5 @@ public class CountryInfo: NSObject {
     public var code: String {
         return _code
     }
-	
-	// MARK: -
 
 }
-
-//TODO: ??? (if can't be compared without Equatable)
