@@ -33,8 +33,14 @@ https://drive.google.com/file/d/1ce86yiNLf3VShZ1zIRUjsYl65qXKgt2a/view?usp=shari
 [ ] Video hadn't shown if the table changed it's height from search bar to keyboard top. Though, definitely, no Toolbar were shown above keyboad during a search.
 
 ### Possible further Improvements
-[ ] Moving data source to CountriesList from CountriesView (```_currentCountries: [CountryInfo]```)
+[ ] Moving data source ( ```_currentCountries: [CountryInfo]``` ) from CountriesView to CountriesList.
 
-[ ] Keyboard notifications + tableHeight changing
+[ ] Processing data (filtering) in background queue attached to CountriesList.
 
-[ ] ??? label with country name with long text is not resized back after flag toggling on-off
+[ ] UI - Keyboard notifications + tableHeight changing.
+
+[ ] UI - ??? label with country name with long text is not resized back after flag toggling on-off.
+
+[ ] UI - Toolbar above keyboard.
+
+[ ] add SwiftLint for code style consistency ?
