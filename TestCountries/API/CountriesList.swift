@@ -309,7 +309,7 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 		return _countries
 	}
 	
-	// MARK: -
+	// MARK: - Additional methods
 
     var orderedCountries: [CountryInfo] {
         return _orderedCountries
@@ -331,7 +331,7 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
         return filteredArray
     }
 
-    func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
+    static func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
                                              nextCountries: [CountryInfo]) -> (addIndexes: [Int],
                                                                                deleteIndexes: [Int],
                                                                                commonIndexes: [Int]) {
@@ -355,7 +355,7 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
         return (addIndexes, deleteIndexes, commonIndexes)
     }
 
-    func convertIndexesToIndexPaths(_ cortege: (addIndexes: [Int],
+    static func convertIndexesToIndexPaths(_ cortege: (addIndexes: [Int],
                                               deleteIndexes: [Int],
                                               commonIndexes: [Int])) -> (addIndexPaths: [IndexPath],
                                                                          deleteIndexPaths: [IndexPath],

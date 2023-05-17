@@ -173,7 +173,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
 //            if nextCountries.count > 0 {
                 //TODO: calculate indexes of filtering out
-                let indexes = CountriesList.shared.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
+                let indexes = CountriesList.findIndexesOfAddedAndRemovedObjects(currentCountries: _currentCountries,
                                                                                        nextCountries: nextCountries)
                 NSLog("_setSearchText - indexesADD = \n\(indexes.addIndexes)")
                 NSLog("_setSearchText - indexesDEL = \n\(indexes.deleteIndexes)")
@@ -181,7 +181,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 
                 // implement saving of data
                 _currentCountries = nextCountries
-                let changes = CountriesList.shared.convertIndexesToIndexPaths(indexes)
+                let changes = CountriesList.convertIndexesToIndexPaths(indexes)
 
                 _tableView.performBatchUpdates({
                     //TODO: batch delete
@@ -190,11 +190,10 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
                     _tableView.reloadRows(at: changes.commonIndexPaths, with: .automatic)
 
                 }, completion: { animationFinishedSuccessfully /*Bool*/ in
-//                    NSLog("completed batch - updating count and visible cells")
-////                    DispatchQueue.main.async {
-//                        self.updateCellsState()
-//                        self._updateCount()
-////                    }
+                    NSLog("completed batch - updating count and visible cells")
+                    DispatchQueue.main.async {
+                        self._updateCount()
+                    }
                 })
 
 //            } else {
@@ -326,6 +325,9 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
         //TODO: re-do search if
         if let _searchText, _searchText.count > 0 {
             _setSearchText(_searchText)
+        } else {
+            //Table update - on state change
+            updateCellsState()
         }
     }
 
@@ -344,7 +346,7 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 //        _tableView.performBatchUpdates {
 //            _tableView.reloadRows(at: indexes, with: .automatic)
 //        }
-//
+
         _tableView.beginUpdates()
         _tableView.visibleCells.forEach { cell in
             if let countryCell = cell as? CountryCellView {
