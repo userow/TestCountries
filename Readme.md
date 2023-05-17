@@ -16,7 +16,7 @@ https://drive.google.com/file/d/1Mj0H-AFDQ-ebXo-jojyUxrIpA0wDU0wv/view?usp=shari
 5) Add a label to the toolbar to show how many countries are displayed when searched.
 6) All actions with the table should be performed with animations.
 
-##The result application should work like on the video:##
+## The result application should work like on the video:
 https://drive.google.com/file/d/1ce86yiNLf3VShZ1zIRUjsYl65qXKgt2a/view?usp=sharing
 
 ### **Additional requirements:**
