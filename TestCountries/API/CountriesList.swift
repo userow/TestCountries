@@ -12,7 +12,7 @@ class CountriesList: NSObject {
 	// MARK: - Declarations. Private
 	
 	private var _countries = [CountryInfo]()
-    private var _orderedCountries = [CountryInfo]()
+	private var _orderedCountries = [CountryInfo]()
 	
 	// MARK: - Initialize
 	
@@ -285,22 +285,22 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 			if parts.count == 4 {
 				let flagSymbol = parts[1]
 				let name = parts[3]
-                let code = parts[0]
+				let code = parts[0]
 				_countries.append(CountryInfo(name: name,
-                                              flagSymbol: flagSymbol,
-                                              code: code))
+											  flagSymbol: flagSymbol,
+											  code: code))
 			}
 		}
 		
 		_countries.append(CountryInfo(name: "A country that has a very long name that does not fit to one line",
-                                      flagSymbol: _countries.first?.flagSymbol ?? "-",
-                                      code: _countries.first?.code ?? "-"
+									  flagSymbol: _countries.first?.flagSymbol ?? "-",
+									  code: _countries.first?.code ?? "-"
 									 ))
-
-        let ordered = _countries.sorted { (lhs, rhs) -> Bool in
-            return (lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending)
-        }
-        _orderedCountries = ordered
+		
+		let ordered = _countries.sorted { (lhs, rhs) -> Bool in
+			return (lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending)
+		}
+		_orderedCountries = ordered
 	}
 	
 	// MARK: - Public
@@ -310,60 +310,60 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 	}
 	
 	// MARK: - Additional methods
-
-    var orderedCountries: [CountryInfo] {
-        return _orderedCountries
-    }
-
-    func filterCountries(state: CountryCellState) -> [CountryInfo] {
-        let searchText = state.highlightedText.lowercased()
-
-        let filteredArray = _orderedCountries.filter { countryInfo in
-            var includeInResult = false
-            includeInResult = countryInfo.name.lowercased().contains(searchText)
-
-            if !includeInResult && state.isCodeOn {
-                includeInResult = includeInResult || countryInfo.code.lowercased().contains(searchText)
-            }
-            return includeInResult
-        }
-
-        return filteredArray
-    }
-
-    static func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
-                                             nextCountries: [CountryInfo]) -> (addIndexes: [Int],
-                                                                               deleteIndexes: [Int],
-                                                                               commonIndexes: [Int]) {
-        var addIndexes = [Int]()
-        var deleteIndexes = [Int]()
-        var commonIndexes = [Int]()
-
-        for (index, country) in nextCountries.enumerated() {
-            if !currentCountries.contains(country) {
-                addIndexes.append(index)
-            } else if let currentIndex = currentCountries.firstIndex(of: country) {
-                commonIndexes.append(currentIndex)
-            }
-        }
-
-        for (index, country) in currentCountries.enumerated() {
-            if !nextCountries.contains(country) {
-                deleteIndexes.append(index)
-            }
-        }
-        return (addIndexes, deleteIndexes, commonIndexes)
-    }
-
-    static func convertIndexesToIndexPaths(_ cortege: (addIndexes: [Int],
-                                              deleteIndexes: [Int],
-                                              commonIndexes: [Int])) -> (addIndexPaths: [IndexPath],
-                                                                         deleteIndexPaths: [IndexPath],
-                                                                         commonIndexPaths: [IndexPath]) {
-        return (cortege.addIndexes.map { IndexPath(row: $0, section: 0) },
-                cortege.deleteIndexes.map { IndexPath(row: $0, section: 0) },
-                cortege.commonIndexes.map { IndexPath(row: $0, section: 0) })
-    }
+	
+	var orderedCountries: [CountryInfo] {
+		return _orderedCountries
+	}
+	
+	func filterCountries(state: CountryCellState) -> [CountryInfo] {
+		let searchText = state.highlightedText.lowercased()
+		
+		let filteredArray = _orderedCountries.filter { countryInfo in
+			var includeInResult = false
+			includeInResult = countryInfo.name.lowercased().contains(searchText)
+			
+			if !includeInResult && state.isCodeOn {
+				includeInResult = includeInResult || countryInfo.code.lowercased().contains(searchText)
+			}
+			return includeInResult
+		}
+		
+		return filteredArray
+	}
+	
+	static func findIndexesOfAddedAndRemovedObjects(currentCountries: [CountryInfo],
+													nextCountries: [CountryInfo]) -> (addIndexes: [Int],
+																					  deleteIndexes: [Int],
+																					  commonIndexes: [Int]) {
+		var addIndexes = [Int]()
+		var deleteIndexes = [Int]()
+		var commonIndexes = [Int]()
+		
+		for (index, country) in nextCountries.enumerated() {
+			if !currentCountries.contains(country) {
+				addIndexes.append(index)
+			} else if let currentIndex = currentCountries.firstIndex(of: country) {
+				commonIndexes.append(currentIndex)
+			}
+		}
+		
+		for (index, country) in currentCountries.enumerated() {
+			if !nextCountries.contains(country) {
+				deleteIndexes.append(index)
+			}
+		}
+		return (addIndexes, deleteIndexes, commonIndexes)
+	}
+	
+	static func convertIndexesToIndexPaths(_ cortege: (addIndexes: [Int],
+													   deleteIndexes: [Int],
+													   commonIndexes: [Int])) -> (addIndexPaths: [IndexPath],
+																				  deleteIndexPaths: [IndexPath],
+																				  commonIndexPaths: [IndexPath]) {
+		return (cortege.addIndexes.map { IndexPath(row: $0, section: 0) },
+				cortege.deleteIndexes.map { IndexPath(row: $0, section: 0) },
+				cortege.commonIndexes.map { IndexPath(row: $0, section: 0) })
+	}
 }
 
 

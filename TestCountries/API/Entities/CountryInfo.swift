@@ -13,16 +13,16 @@ public class CountryInfo: NSObject {
 	
 	private let _name: String
 	private let _flagSymbol: String
-    private let _code: String
+	private let _code: String
 	
 	// MARK: - Initialize
 	
 	public required init(name: String,
-                         flagSymbol: String,
-                         code: String) {
+						 flagSymbol: String,
+						 code: String) {
 		_name = name
-        _flagSymbol = flagSymbol
-        _code = code
+		_flagSymbol = flagSymbol
+		_code = code
 	}
 	
 	// MARK: - Public
@@ -30,13 +30,13 @@ public class CountryInfo: NSObject {
 	public var name: String {
 		return _name
 	}
-
-    public var flagSymbol: String {
+	
+	public var flagSymbol: String {
 		return _flagSymbol
 	}
-    
-    public var code: String {
-        return _code
-    }
-
+	
+	public var code: String {
+		return _code
+	}
+	
 }
