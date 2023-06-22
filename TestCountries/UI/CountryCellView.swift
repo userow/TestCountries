@@ -5,22 +5,6 @@
 //  Created by John Doe on 24.04.2023.
 //
 
-public struct CountryCellState {
-	var isFlagOn = false
-	var isCodeOn = false
-	var highlightedText = ""
-}
-
-extension CountryCellState: Equatable {
-	static func != (lhs: Self, rhs: Self) -> Bool {
-		let equal = (lhs.isFlagOn != rhs.isFlagOn) ||
-		(lhs.isCodeOn != rhs.isCodeOn) ||
-		(lhs.highlightedText != rhs.highlightedText)
-
-		return equal
-	}
-}
-
 import UIKit
 
 class CountryCellView: UITableViewCell {
@@ -105,7 +89,7 @@ class CountryCellView: UITableViewCell {
 
 	override func prepareForReuse() {
 		configure(countryInfo: nil)
-		updateAppearance(CountryCellState())
+		updateAppearance(CountriesStateDTO())
 	}
 	
 	// MARK: - displayed data manipulation
@@ -119,7 +103,7 @@ class CountryCellView: UITableViewCell {
 	}
 
 	/// appearance update - flag / code / text highlight
-	func updateAppearance(_ state: CountryCellState, animated: Bool = false) {
+	func updateAppearance(_ state: CountriesStateDTO, animated: Bool = false) {
 		// Show - Hide Animation
 		let flagSwitched = (_labelFlag.isHidden != !state.isFlagOn)
 		let codeSwitched = (_labelCode.isHidden != !state.isCodeOn)

@@ -17,6 +17,7 @@
 		1CC7BF3329F6830200A60E98 /* CountryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7BF3229F6830200A60E98 /* CountryInfo.swift */; };
 		1CC7BF3629F6835100A60E98 /* CountriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7BF3529F6835100A60E98 /* CountriesList.swift */; };
 		1CC7BF3E29F6DAA800A60E98 /* CountryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7BF3D29F6DAA800A60E98 /* CountryCellView.swift */; };
+		914B2C192A227C6F00640615 /* CountriesStateDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914B2C182A227C6F00640615 /* CountriesStateDTO.swift */; };
 		916890A92A0CF30E00E7EA19 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916890A82A0CF30E00E7EA19 /* Color+Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		1CC7BF3229F6830200A60E98 /* CountryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryInfo.swift; sourceTree = "<group>"; };
 		1CC7BF3529F6835100A60E98 /* CountriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesList.swift; sourceTree = "<group>"; };
 		1CC7BF3D29F6DAA800A60E98 /* CountryCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryCellView.swift; sourceTree = "<group>"; };
+		914B2C182A227C6F00640615 /* CountriesStateDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesStateDTO.swift; sourceTree = "<group>"; };
 		916890A82A0CF30E00E7EA19 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -94,6 +96,7 @@
 			children = (
 				1CC7BF2E29F681E000A60E98 /* CountriesView.swift */,
 				1CC7BF3D29F6DAA800A60E98 /* CountryCellView.swift */,
+				914B2C182A227C6F00640615 /* CountriesStateDTO.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 				1CC7BF1B29F6814100A60E98 /* AppDelegate.swift in Sources */,
 				1CC7BF3329F6830200A60E98 /* CountryInfo.swift in Sources */,
 				1CC7BF1D29F6814100A60E98 /* SceneDelegate.swift in Sources */,
+				914B2C192A227C6F00640615 /* CountriesStateDTO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

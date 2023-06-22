@@ -315,7 +315,7 @@ ZW|🇿🇼|U+1F1FF U+1F1FC|Zimbabwe
 		return _orderedCountries
 	}
 	
-	func filterCountries(state: CountryCellState) -> [CountryInfo] {
+	func filterCountries(state: CountriesStateDTO) -> [CountryInfo] {
 		let searchText = state.highlightedText.lowercased()
 		
 		let filteredArray = _orderedCountries.filter { countryInfo in

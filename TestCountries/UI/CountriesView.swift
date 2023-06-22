@@ -101,8 +101,8 @@ class CountriesView: UIView, UITableViewDataSource, UITableViewDelegate, UISearc
 		_currentCountries = CountriesList.shared.orderedCountries
 	}
 
-	private func _currentState() -> CountryCellState {
-		return CountryCellState(isFlagOn: _isFlaggOn, isCodeOn: _isCodeOn, highlightedText: _searchText ?? "")
+	private func _currentState() -> CountriesStateDTO {
+		return CountriesStateDTO(isFlagOn: _isFlaggOn, isCodeOn: _isCodeOn, highlightedText: _searchText ?? "")
 	}
 
 	private func _setIsSearching(_ isSearching: Bool, animated: Bool) {
